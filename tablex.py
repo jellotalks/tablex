@@ -53,14 +53,12 @@ def main():
     print("\rData written to file.  ")
 
 
-# Export a table with the given parameters. This functions behaves the same as main(), but without the user prompts
+# Export a table with the given parameters. This function behaves the same as main(), but without the user prompts
 # This is the function to call when importing this library
-def table_export(url : str = 'https://en.wikibooks.org/wiki/Vehicle_Identification_Numbers_(VIN_codes)/World_Manufacturer_Identifier_(WMI)', filepath : str = 'data.xlsx', tablenum : int = 0):
+def table_export(url : str, filepath : str = 'data.xlsx', tablenum : int = 0):
     req = connect_to_url(url)
     df = extract_table(req,tablenum)
     dataframe_to_xlsx(df,uniquefile(filepath))
-
-
 
 # Connect to a URL and return the request response
 def connect_to_url(url : str) -> requests.Response:
@@ -90,13 +88,10 @@ def extract_table(req : requests.Response, tablenum: int) -> pd.DataFrame:
     soup = BeautifulSoup(req.text,'html.parser')
     tables = soup.find_all('table')
 
-    print(tables[0].prettify())
-    return
     # Check for errors in data pulled
     if len(tables) - 1 < tablenum:
         SystemExit("Cannot grab table #{} from {} possible table(s).".format(tablenum,len(tables)))
     table = tables[tablenum]
-
 
     # Extract table body, replacing breaks with real new line characters. If there is no table body, just use the table itself
     tablebody = table.find('tbody') if table.find('tbody') else table
